@@ -14,8 +14,8 @@ The Railway Seat Booking System is a web application that allows users to book t
 
 ## Tech Stack
 
-- **Backend**: Java
-- **Framework**: Spring Boot
+- **Backend**: Java 22
+- **Framework**: Spring Boot 3.3.4
 - **Database**: PostgreSQL / MySQL
 - **Frontend**: HTML, CSS, JavaScript
 - **Others**: [Any other libraries or tools used]
