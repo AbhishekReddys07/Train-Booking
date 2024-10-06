@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Seat Booking</title>
+</head>
+<body>
+    <h1>Train Seat Booking</h1>
+    <div>
+        <h2>Available Seats by Row</h2>
+        <input type="number" id="rowNumber" placeholder="Enter Row Number (1-12)" />
+        <button onclick="fetchAvailableSeatsByRow()">Get Available Seats</button>
+        <div id="seatsInRow"></div>
+    </div>
+
+    <div>
+        <h2>All Available Seats</h2>
+        <button onclick="fetchAllAvailableSeats()">Get All Available Seats</button>
+        <div id="allSeats"></div>
+    </div>
+
+    <div>
+        <h2>Book Seats</h2>
+        <input type="number" id="numSeats" placeholder="Number of Seats to Book" />
+        <button onclick="bookSeats()">Book Seats</button>
+        <div id="bookedSeats"></div>
+    </div>
+
+    <script>
+        async function fetchAvailableSeatsByRow() {
+            const rowNumber = document.getElementById('rowNumber').value;
+            const response = await fetch(`/api/booking/availableSeatsByRow/${rowNumber}`);
+            const seats = await response.json();
+            document.getElementById('seatsInRow').innerText = JSON.stringify(seats);
+        }
+
+        async function fetchAllAvailableSeats() {
+            const response = await fetch(`/api/booking/availableSeats`);
+            const seats = await response.json();
+            document.getElementById('allSeats').innerText = JSON.stringify(seats);
+        }
+
+        async function bookSeats() {
+            const numSeats = document.getElementById('numSeats').value;
+            const response = await fetch(`/api/booking/bookSeats?numSeats=${numSeats}`, { method: 'POST' });
+            const seats = await response.json();
+            document.getElementById('bookedSeats').innerText = JSON.stringify(seats);
+        }
+    </script>
+</body>
+</html>

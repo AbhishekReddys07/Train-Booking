@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Seat Booking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+
+        div {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            padding: 10px;
+            width: calc(100% - 22px);
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Train Seat Booking</h1>
+    <div>
+        <h2>Available Seats by Row</h2>
+        <input type="number" id="rowNumber" placeholder="Enter Row Number (1-12)" />
+        <button onclick="fetchAvailableSeatsByRow()">Get Available Seats</button>
+        <div id="seatsInRow"></div>
+    </div>
+
+    <div>
+        <h2>All Available Seats</h2>
+        <button onclick="fetchAllAvailableSeats()">Get All Available Seats</button>
+        <div id="allSeats"></div>
+    </div>
+
+    <div>
+        <h2>Book Seats</h2>
+        <input type="number" id="numSeats" placeholder="Number of Seats to Book" />
+        <button onclick="bookSeats()">Book Seats</button>
+        <div id="bookedSeats"></div>
+    </div>
+
+    <script>
+    async function fetchAvailableSeatsByRow() {
+        const rowNumber = document.getElementById('rowNumber').value;
+        try {
+            const response = await fetch(`/api/booking/availableSeatsByRow/${rowNumber}`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const seats = await response.json();
+
+            // Create a table to display the available seats
+            let tableHTML = '<table><tr><th>Seat Number</th><th>Status</th></tr>';
+            seats.forEach(seat => {
+                tableHTML += `<tr><td>${seat.seatNumber}</td><td>${seat.available ? 'Available' : 'Booked'}</td></tr>`;
+            });
+            tableHTML += '</table>';
+            document.getElementById('seatsInRow').innerHTML = tableHTML;
+        } catch (error) {
+            console.error("Error fetching available seats by row:", error);
+            document.getElementById('seatsInRow').innerText = "Error fetching available seats.";
+        }
+    }
+
+    async function fetchAllAvailableSeats() {
+        try {
+            const response = await fetch(`/api/booking/available`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const seats = await response.json();
+
+            // Create a table to display all available seats
+            let tableHTML = '<table><tr><th>Seat Number</th><th>Status</th></tr>';
+            seats.forEach(seat => {
+                tableHTML += `<tr><td>${seat.seatNumber}</td><td>${seat.available ? 'Available' : 'Booked'}</td></tr>`;
+            });
+            tableHTML += '</table>';
+            document.getElementById('allSeats').innerHTML = tableHTML;
+        } catch (error) {
+            console.error("Error fetching all available seats:", error);
+            document.getElementById('allSeats').innerText = "Error fetching all available seats.";
+        }
+    }
+
+    async function bookSeats() {
+        const numSeats = document.getElementById('numSeats').value;
+        try {
+            const response = await fetch(`/api/booking/bookSeats?numSeats=${numSeats}`, { method: 'POST' });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const seats = await response.json();
+            document.getElementById('bookedSeats').innerText = `Booked Seats: ${JSON.stringify(seats)}`;
+        } catch (error) {
+            console.error("Error booking seats:", error);
+            document.getElementById('bookedSeats').innerText = "Error booking seats.";
+        }
+    }
+
+    </script>
+</body>
+</html>
